@@ -11,6 +11,10 @@ parser.add_argument('--data-train-len', type=int, default=1,
 # settings related to experiment
 parser.add_argument('--num-runs', type=int, default=2,
                     help='Number of independent runs')
+parser.add_argument('--latent-dims', type=int, default=2,
+                    help='Number of dimensions in low-dimensional dynamics')
+parser.add_argument('--input-dims', type=int, default=2,
+                    help='Number of dimensions in input signal')
 
 
 args = parser.parse_args()
@@ -18,7 +22,7 @@ params = vars(args)
 
 # settings related to dataset
 params['len_time'] = 51
-n = 2  # dimension of system (and input layer)
+n = args.input_dims  # dimension of system (and input layer)
 num_initial_conditions = 5000  # per training file
 params['delta_t'] = 0.02
 
@@ -28,7 +32,7 @@ params['folder_name'] = 'results_' + params['data_name']
 # settings related to network architecture
 params['num_real'] = 2
 params['num_complex_pairs'] = 0
-params['num_evals'] = 2
+params['num_evals'] = args.latent_dims
 k = params['num_evals']  # dimension of y-coordinates
 w = 30
 params['widths'] = [2, w, k, k, w, 2]
