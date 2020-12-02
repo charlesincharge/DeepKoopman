@@ -60,7 +60,9 @@ params['num_steps_per_file_pass'] = (int(steps_to_see_all) + 1) * params['num_st
 
 # settings related to the timing
 params['max_time'] = 4 * 60 * 60  # 4 hours
+params['min_5min'] = .99
 params['min_20min'] = .5
+params['min_40min'] = .05
 params['min_1hr'] = .0004
 params['min_2hr'] = .00001
 params['min_3hr'] = .000006
