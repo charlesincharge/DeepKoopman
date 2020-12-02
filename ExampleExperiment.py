@@ -9,7 +9,7 @@ parser.add_argument('--data-name', type=str, default='Example')
 parser.add_argument('--data-train-len', type=int, default=1,
                     help='Number of training files')
 # settings related to experiment
-parser.add_argument('--num-runs', type=int, default=2
+parser.add_argument('--num-runs', type=int, default=2,
                     help='Number of independent runs')
 
 
