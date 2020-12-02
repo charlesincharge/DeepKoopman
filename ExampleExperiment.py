@@ -30,9 +30,9 @@ params['delta_t'] = 0.02
 params['folder_name'] = 'results_' + params['data_name']
 
 # settings related to network architecture
-params['num_real'] = 2
+params['num_real'] = args.latent_dims
 params['num_complex_pairs'] = 0
-params['num_evals'] = args.latent_dims
+params['num_evals'] = params['num_real'] + 2 * params['num_complex_pairs']
 k = params['num_evals']  # dimension of y-coordinates
 w = 30
 params['widths'] = [2, w, k, k, w, 2]
