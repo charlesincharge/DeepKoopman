@@ -16,9 +16,8 @@ x2 = (x2range(2)-x2range(1))*rand([numICs,1])+x2range(1);
 
 lenT = length(tSpan);
 
-X = zeros(numICs*lenT, 2);
+X = zeros(numICs, lenT, 2);
 
-count = 1;
 % in order to solve more accurately than ode45, map into 3D linear system
 % and use exact analytic solution 
 for j = 1:numICs
@@ -32,8 +31,7 @@ for j = 1:numICs
         c4 * exp(2*mu*tSpan)];
 
     Xhat = Y(1:2,:);
-    X(1+(count-1)*lenT : lenT + (count-1)*lenT,:) = Xhat(:,1:lenT)';
-    count = count + 1;
+    X(j,:,:) = Xhat(:,1:lenT)';
 end
 
 
