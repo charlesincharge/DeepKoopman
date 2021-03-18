@@ -2,41 +2,67 @@
 numICs = 5000;
 filename = 'DiscreteSpectrumExample.h5';
 
-if exist(filename, 'file') == 2
-    warning('Deleting %s', filename);
-    delete(filename);
-end
-
-
 x1range = [-.5, .5];
 x2range = x1range;
 tSpan = 0:0.02:1;
 mu = -0.05;
 lambda = -1;
 
-% time variable
-h5create(filename, '/time', numel(tSpan));
-h5write(filename, '/time', tSpan)
+%% Create file
+file_id = H5F.create(filename, 'H5F_ACC_TRUNC', 'H5P_DEFAULT', 'H5P_DEFAULT');
 
-% test data
+%% Label state dimension axis
+dim_axis_name = 'state_dim';
+dim_axis_idx = 1;
+dim_names = {'x1', 'x2'};
+h5create(filename, ['/', dim_axis_name], numel(dim_names), 'Datatype', 'string');
+h5write(filename, ['/', dim_axis_name], dim_names);
+dim_dset_id = H5D.open(H5G.open(file_id, '/'), dim_axis_name);
+H5DS.set_scale(dim_dset_id, dim_axis_name);
+
+%% Create time axis
+time_axis_name = 'time';
+h5create(filename, ['/', time_axis_name], numel(tSpan));
+h5write(filename, ['/', time_axis_name], tSpan)
+time_dset_id = H5D.open(H5G.open(file_id, '/'), time_axis_name);
+H5DS.set_scale(time_dset_id, time_axis_name);
+
+%% test data
 seed = 1;
 X_test = DiscreteSpectrumExampleFn(x1range, x2range, round(.1*numICs), tSpan, mu, lambda, seed);
-h5create(filename, '/test', size(X_test));
-h5write(filename, '/test', X_test)
+h5create(filename, '/data', size(X_test));
+h5write(filename, '/data', X_test)
 
-% validation
+dset_id = H5D.open(H5G.open(file_id, '/'), 'test');
+H5D.close(dset_id);
+
+%% validation
 seed = 2;
 X_val = DiscreteSpectrumExampleFn(x1range, x2range, round(.2*numICs), tSpan, mu, lambda, seed);
 h5create(filename, '/val', size(X_val));
 h5write(filename, '/val', X_val)
 
-% training data
+dset_id = H5D.open(H5G.open(file_id, '/'), 'val');
+H5D.close(dset_id);
+
+%% training data
 for j = 1:3
 	seed = 2+j;
 	X_train = DiscreteSpectrumExampleFn(x1range, x2range, round(.7*numICs), tSpan, mu, lambda, seed);
 	group_name = sprintf('/train_%d',j);
 	h5create(filename, group_name, size(X_train))
 	h5write(filename, group_name, X_train)
+
+    dset_id = H5D.open(H5G.open(file_id, '/'), group_name);
+    H5DS.set_label(dset_id, dim_axis_idx, dim_axis_name);
+    H5D.close(dset_id);
 end
 
+%% Clean up
+% Note that some exceptions might cause issues before this
+H5D.close(time_dset_id);
+H5D.close(dim_dset_id);
+H5F.close(file_id);
 
+%% Debug logging
+file_h5info = h5info(filename)
