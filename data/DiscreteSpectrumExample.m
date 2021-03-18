@@ -1,6 +1,6 @@
 %% Generates data that can be loaded by xarray in Python
 
-numICs = 5000;
+numICs = 10 * 1000;
 filename = 'DiscreteSpectrumExample.h5';
 
 x1range = [-.5, .5];
